@@ -1,4 +1,5 @@
 import { Toaster } from "react-hot-toast";
+import { Analytics } from "@vercel/analytics/react";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
@@ -25,22 +26,28 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
-        <html lang="en">
-            <ProfileProvider>
-                <UserProvider>
-                    <body className={`${inter.className} min-h-screen bg-black text-white w-full  max-w-[2500px] m-auto`}>
-                        <Toaster position="top-right" />
-                        <NextTopLoader color="#fff" initialPosition={0.08} crawlSpeed={200} height={3} crawl={true} showSpinner={true} easing="ease" speed={200} zIndex={1600} showAtBottom={false} />
-                        <TopNavbar />
-                        <SideBar />
-                        <ScrollToTop />
-                        <main className="flex relative flex-col ml-0 md:ml-20 lg:ml-52 ">
-                            {children}
-                            <Footer />
-                        </main>
-                    </body>
-                </UserProvider>
-            </ProfileProvider>
+        <html lang="en" suppressHydrationWarning>
+            <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
+            <body className={inter.className}>
+                <section>
+                    <ProfileProvider>
+                        <UserProvider>
+                            <Toaster position="top-right" />
+                            <NextTopLoader color="#fff" initialPosition={0.08} crawlSpeed={200} height={3} crawl={true} showSpinner={true} easing="ease" speed={200} zIndex={1600} showAtBottom={false} />
+                            <main className="min-h-screen w-full text-white bg-black">
+                                <TopNavbar />
+                                <SideBar />
+                                <ScrollToTop />
+                                <section className="flex relative flex-col ml-0 md:ml-20 lg:ml-52 ">
+                                    {children}
+                                    <Analytics />
+                                    <Footer />
+                                </section>
+                            </main>
+                        </UserProvider>
+                    </ProfileProvider>
+                </section>
+            </body>
         </html>
     );
 }

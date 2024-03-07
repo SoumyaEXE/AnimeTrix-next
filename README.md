@@ -6,12 +6,14 @@
   <h3 align="center">AnimeTrix</h3>
 
 
-<div align="center">
+<div align="center" >
 
 ![NextJs](https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)
+![jwt token](http://jwt.io/img/badge-compatible.svg)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 [![Deno](https://github.com/ShivaBhattacharjee/AnimeTrix-next/actions/workflows/deno.yml/badge.svg)](https://github.com/ShivaBhattacharjee/AnimeTrix-next/actions/workflows/deno.yml)
 ![GitHub repo size](https://img.shields.io/github/repo-size/shivabhattacharjee/animetrix-next)
+[![Animetrix Docker image](https://github.com/ShivaBhattacharjee/AnimeTrix-next/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/ShivaBhattacharjee/AnimeTrix-next/actions/workflows/main.yml)
 
 
   </div>
@@ -38,6 +40,7 @@
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
   - [Local](#local)
+  - [API test](#api-test)
   - [Docker](#docker)
     - [Vist DockerHub Image](#vist-dockerhub-image)
   - [Example](#example)
@@ -61,7 +64,7 @@ Anime Trix is an anime streaming / downloading site that offers a vast collectio
 
 ## Built With
 
-AnimeTrix is built using ReactJs and vanilla Css
+AnimeTrix is built using NextJs 
 
 * [NextJS](https://nextjs.org)
 * [TailwindCss](https://tailwindcss.com/)
@@ -96,6 +99,11 @@ npm install
 npm run dev
 ```
 Server will start at http://localhost:3000/
+
+### API test
+```
+npm run test
+```
 
 ### Docker
 

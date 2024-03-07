@@ -4,7 +4,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { ClipLoader } from "react-spinners";
 import axios from "axios";
 import { getCookie } from "cookies-next";
-import { Clipboard, ClipboardPaste, StickyNote, ThumbsDown, ThumbsUp, Trash } from "lucide-react";
+import { Clipboard, ClipboardPaste, StickyNote, Trash } from "lucide-react";
 
 import UserContext from "@/context/getUserDetails";
 import { Error } from "@/types/ErrorTypes";
@@ -13,6 +13,7 @@ import Toast from "@/utils/toast";
 type Props = {
     streamId: string;
 };
+
 type comment = {
     text: string;
     timestamp: Date;
@@ -26,7 +27,6 @@ const CommentSection = ({ streamId }: Props) => {
     const [addCommentLoading, setAddCommentLoading] = useState<boolean>(false);
     const [commentData, setCommentData] = useState<comment[]>([]);
     const { userId } = useContext(UserContext);
-    const [commenterId, setCommenterId] = useState<string[]>([]);
     const [userData, setUserData] = useState<{ [key: string]: { username: string; profilePicture: string } }>({});
     const [showClipboardIcon, setShowClipboardIcon] = useState(true);
     const [page, setPage] = useState(1);
@@ -38,9 +38,7 @@ const CommentSection = ({ streamId }: Props) => {
             const comments = res?.data?.comment?.comments || [];
             setCommentData(comments);
             const userIds = comments.map((comment: comment) => comment.userId) || [];
-            setCommenterId(userIds);
 
-            // Fetch user information for each user ID
             const usersData = await Promise.all(
                 userIds.map(async (userId: number) => {
                     const userResponse = await fetch(`/api/get-users?userId=${userId}`);
@@ -52,7 +50,6 @@ const CommentSection = ({ streamId }: Props) => {
                 }),
             );
 
-            // Update user data state
             setUserData(Object.assign({}, ...usersData));
         } catch (error: unknown) {
             console.log(error);
@@ -62,13 +59,8 @@ const CommentSection = ({ streamId }: Props) => {
         try {
             const res = await axios.get(`/api/comment?streamId=${streamId}&page=${page + 1}`);
             const comments: comment[] = res?.data?.comment?.comments || [];
-
-            if (comments.length > 10) {
-                setPage(page + 1);
-                setCommentData((prevComments: comment[]) => [...prevComments, ...comments]);
-            } else {
-                setHasMore(false);
-            }
+            setPage(page + 1);
+            setCommentData((prevComments: comment[]) => [...prevComments, ...comments]);
         } catch (error) {
             console.error(error);
             setHasMore(false);
@@ -76,6 +68,7 @@ const CommentSection = ({ streamId }: Props) => {
     };
 
     const HandleaddComment = async () => {
+        userId;
         const commentData = {
             streamId: streamId,
             text: comment,
@@ -117,7 +110,6 @@ const CommentSection = ({ streamId }: Props) => {
         const commentDate = new Date(timestamp);
         const timeDifference = currentDate.getTime() - commentDate.getTime();
 
-        // Convert milliseconds to seconds
         const seconds = Math.floor(timeDifference / 1000);
 
         if (seconds < 60) {
@@ -145,10 +137,9 @@ const CommentSection = ({ streamId }: Props) => {
                 Toast.SuccessshowToast("Copied to clipboard");
                 setShowClipboardIcon(false);
 
-                // Reset the clipboard icon visibility after 2 seconds
                 setTimeout(() => {
                     setShowClipboardIcon(true);
-                }, 2000);
+                }, 3500);
             })
             .catch(() => Toast.ErrorShowToast("Failed to copy to clipboard"));
     };
@@ -156,12 +147,11 @@ const CommentSection = ({ streamId }: Props) => {
     useEffect(() => {
         getComment();
     }, []);
-    console.log(commentData.length);
 
     return (
         <>
             <div className="flex flex-col gap-3 mt-4">
-                <h1 className="text-3xl font-semibold">Comments</h1>
+                <h1 className="text-2xl mt-4 font-semibold">{commentData?.length || undefined} Comments</h1>
                 <textarea value={comment} onChange={(e) => setComment(e.target.value)} placeholder="Add a comment" className="p-2 w-full lg:w-1/2 rounded-lg h-20 bg-transparent border border-white/25 focus:outline-none"></textarea>
                 <button className=" text-xl bg-white p-4 rounded-lg w-1/2 justify-center flex items-center gap-3 md:w-44 text-black font-semibold" onClick={HandleaddComment}>
                     {addCommentLoading && <ClipLoader size={20} color="#000" />}
@@ -173,21 +163,21 @@ const CommentSection = ({ streamId }: Props) => {
                         Be the first to comment
                     </h1>
                 ) : (
-                    <InfiniteScroll
-                        className="w-full border-2 overflow-x-clip border-white/25  lg:w-1/2 p-3 rounded-lg h-auto max-h-[470px] overflow-y-scroll"
-                        dataLength={commentData.length}
-                        next={fetchMoreData}
-                        hasMore={hasMore}
-                        loader={
-                            <div className="flex justify-center mt-5 items-center">
-                                <ClipLoader color="#fff" size={30} />
-                            </div>
-                        }
-                    >
-                        <div className=" mt-4 relative grid gap-4 ">
+                    <div className=" mt-4 relative grid gap-4 ">
+                        <InfiniteScroll
+                            className="w-full border-2 flex flex-col gap-4 overflow-x-clip border-white/25  lg:w-1/2 p-3 rounded-lg h-auto max-h-[470px] overflow-y-scroll"
+                            dataLength={commentData.length}
+                            next={fetchMoreData}
+                            hasMore={hasMore}
+                            loader={
+                                <div className="flex justify-center mt-5 items-center">
+                                    <ClipLoader color="#fff" size={30} />
+                                </div>
+                            }
+                        >
                             {commentData.map((comment: comment) => (
                                 <div className="flex gap-4" key={comment?._id}>
-                                    {userData[comment.userId]?.profilePicture === "" ? <div className="h-12 w-12 rounded-full font-semibold justify-center flex items-center">{userData[comment.userId]?.username[0]?.toUpperCase()}</div> : <img src={userData[comment?.userId]?.profilePicture} className="h-12 w-12 rounded-full font-semibold justify-center flex items-center" />}
+                                    {userData[comment.userId]?.profilePicture === "" ? <div className="h-12 w-12 bg-white text-black font-bold text-lg rounded-full justify-center flex items-center">{userData[comment.userId]?.username[0]?.toUpperCase()}</div> : <img src={userData[comment?.userId]?.profilePicture} className="h-12 w-12 rounded-full font-semibold justify-center flex items-center" />}
                                     <div className="flex flex-col">
                                         <div className="flex w-full items-center">
                                             <div className="flex gap-3 items-center">
@@ -198,17 +188,15 @@ const CommentSection = ({ streamId }: Props) => {
                                         <div className="flex flex-col gap-3">
                                             <h1 className="text-sm md:text-lg font-medium">{comment?.text}</h1>
                                             <div className="flex gap-5 items-center">
-                                                <ThumbsUp size={20} onClick={() => Toast.ErrorShowToast("Under development")} />
-                                                <ThumbsDown size={20} onClick={() => Toast.ErrorShowToast("Under Development")} />
                                                 {showClipboardIcon ? <Clipboard size={20} onClick={() => handleCopyToClipboard(comment?.text)} className="cursor-pointer" /> : <ClipboardPaste size={20} className=" cursor-pointer" />}
-                                                {commenterId?.includes(userId) && <Trash size={20} className=" cursor-pointer" onClick={() => handleDeleteComment(comment?._id)} />}
+                                                {userId && comment.userId !== undefined && ((typeof comment.userId === "number" && userId !== null) || (typeof comment.userId === "string" && comment.userId === userId.toString())) && <Trash size={20} className="cursor-pointer" onClick={() => handleDeleteComment(comment?._id)} />}
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             ))}
-                        </div>
-                    </InfiniteScroll>
+                        </InfiniteScroll>
+                    </div>
                 )}
             </div>
         </>

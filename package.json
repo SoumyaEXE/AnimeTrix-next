@@ -1,14 +1,15 @@
 {
-  "name": "animetrix-next",
+  "name": "animetrix",
   "version": "3.0.0",
   "private": false,
-  "description": "animetrix but with next js 13",
+  "description": "Animetrix is a project that utilizes the Anilist platform to obtain information on various anime titles, and it combines this data with the Gogoanime API to provide ad-free streaming of anime content.",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "prepare": "husky install",
+    "test": "jest",
     "fix-imports": "import-sort --write './src/**/*.ts' './src/**/*.tsx'"
   },
   "dependencies": {
@@ -18,6 +19,7 @@
     "@types/node": "20.8.2",
     "@types/react": "18.2.18",
     "@types/react-dom": "18.2.7",
+    "@vercel/analytics": "^1.1.1",
     "autoprefixer": "10.4.14",
     "axios": "^1.4.0",
     "bcryptjs": "^2.4.3",
@@ -54,13 +56,14 @@
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.4",
-    "@types/jest": "^29.5.5",
+    "@types/jest": "^29.5.11",
     "@types/nodemailer": "^6.4.11",
     "@typescript-eslint/eslint-plugin": "^6.9.1",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-simple-import-sort": "^10.0.0",
     "husky": "^8.0.0",
     "import-sort-cli": "^6.0.0",
-    "prettier": "3.0.2"
+    "prettier": "3.0.2",
+    "ts-jest": "^29.1.1"
   }
 }
